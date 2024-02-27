@@ -1,56 +1,36 @@
-function findStart(arr, num) {
-  let left = 0;
-  let right = arr.length - 1;
-  let midIdx = Math.floor((right - left) / 2);
-  while (right - left !== 1) {
-    if (arr[midIdx] === num) {
-      right = midIdx;
-      midIdx = Math.floor((right - left) / 2);
-    } else if (arr[midIdx] < num) {
-      left = midIdx;
-      midIdx += Math.floor((right - left) / 2);
-    } else if (arr[midIdx] > num) {
-      right = midIdx;
-      midIdx = Math.floor((right - left) / 2);
-    }
-  }
-  if (arr[left] === arr[right]) return left;
-  if (arr[right] !== num) return null;
-  return right;
+function sortedFrequency(arr, num, left = 0, right = arr.length - 1) {
+  const mid = left + Math.floor((right - left) / 2);
+  if (arr[mid] === num) {
+    const startIdx = findStart(arr, num, left, mid);
+    const endIdx = findEnd(arr,num,mid,right);
+    return endIdx - startIdx + 1;
+  } else if (arr[mid] < num) {
+    if (arr[right] < num) return -1;
+    const startIdx = findStart(arr, num, mid, right);
+    return arr.length - startIdx;
+  } else if (arr[mid] > num) {
+    if (arr[left] > num) return -1;
+    const endIdx = findEnd(arr,num,left,mid);
+    return endIdx + 1;
+  } 
 }
 
-function findEnd(arr, num) {
-  let left = 0;
-  let right = arr.length - 1;
-  let midIdx = Math.floor((right - left) / 2);
-  while (right - left !== 1) {
-    if (arr[midIdx] === num) {
-      left = midIdx;
-      midIdx += Math.floor((right - left) / 2);
-    } else if (arr[midIdx] < num) {
-      left = midIdx;
-      midIdx += Math.floor((right - left) / 2);
-    } else if (arr[midIdx] > num) {
-      right = midIdx;
-      midIdx = Math.floor((right - left) / 2);
-    }
+function findStart(arr, num, left, right) {
+  const mid = left + Math.floor((right - left) / 2);
+  if (arr[mid + 1] === num && arr[mid] < num) return mid + 1;
+  if (left <= right) {
+    if (arr[mid] < num) return findStart(arr, num, mid, right);
+    else if (arr[mid] === num && arr[mid - 1] < num) return mid;
   }
-  if (arr[left] === arr[right]) return left;
-  if (arr[left] !== num) return null;
-  return left;
 }
 
-function sortedFrequency(arr, num) {
-  const start = findStart(arr, num);
-  let end = findEnd(arr, num);
-  if (start === null) {
-    return -1;
-  } else if (end === null) {
-    end = arr.length - 1;
-    return arr.slice(start, end + 1).length;
-  } else {
-    return arr.slice(start, end + 1).length;
-  }
+function findEnd(arr, num, left, right) {
+  const mid = left + Math.floor((right - left) / 2);
+  if (arr[mid] === num && arr[mid+1] > num) return mid;
+  if (left <= right) {
+    if (arr[mid] === num) return findEnd(arr,num,mid,right);
+    else if (arr[mid] > num) return findEnd(arr,num,left,mid);
+  } 
 }
 
 module.exports = sortedFrequency;

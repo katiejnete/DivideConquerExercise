@@ -1,24 +1,22 @@
 function countZeroes(arr) {
-  let left = 0;
-  let right = arr.length - 1;
-  let midIdx = Math.floor((right - left) / 2);
-  while (right - left !== 1) {
-    if (arr[midIdx] === 1) {
-      left = midIdx;
-      midIdx += Math.floor((right - left) / 2);
-    }
-    else {
-      right = midIdx;
-      midIdx = Math.floor((right - left) / 2);
-    }
+  const firstZero = findFirst(arr)
+  if (firstZero === -1) return 0;
+  return arr.length - firstZero;
+}
+
+function findFirst(arr, left = 0, right = arr.length - 1) {
+  if (right >= left) {
+    const mid = left + Math.floor((right - left) / 2);
+    if (arr[mid] === 0 && arr[mid - 1] === 1) {
+      return mid;
+    } else if (arr[mid] === 1) {
+      return findFirst(arr, mid + 1, right);
+    } else if (arr[mid] === 0 && arr[mid - 1] === 0) {
+      return findFirst(arr, left, mid - 1)
+    } 
   }
-  if (arr[left] === arr[right] && arr[left] === 0) {
-    return arr.length
-  }
-  else if (arr[left] === arr[right] && arr[left] === 1) {
-    return 0
-  }
-  return arr.slice(right).length
+  if (right === 0) return 0;
+  return -1;
 }
 
 module.exports = countZeroes;
